@@ -8,8 +8,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "AzureChatGPT",
-  description: "AzureChatGPT",
+  title: "HexaChatGPT",
+  description: "HexaChatGPT",
 };
 
 export default function RootLayout({

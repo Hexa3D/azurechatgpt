@@ -16,7 +16,7 @@ export const LogIn = () => {
       <CardHeader className="gap-2">
         <CardTitle className="text-2xl flex gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={"hexa-logo.png"} />
+            <AvatarImage src={"ai-icon.png"} />
           </Avatar>
           <span>
             Hexa<span className="text-muted-foreground">ChatGPT</span>

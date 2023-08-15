@@ -2,8 +2,8 @@ import { ProtectedPage } from "@/features/auth/protected-page";
 import { MainMenu } from "@/features/menu/menu";
 
 export const metadata = {
-  title: "AzureChatGPT",
-  description: "AzureChatGPT",
+  title: "HexaChatGPT",
+  description: "HexaChatGPT",
 };
 
 export default async function RootLayout({
