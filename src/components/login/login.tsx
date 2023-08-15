@@ -16,14 +16,14 @@ export const LogIn = () => {
       <CardHeader className="gap-2">
         <CardTitle className="text-2xl flex gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={"ai-icon.png"} />
+            <AvatarImage src={"hexa-logo.png"} />
           </Avatar>
           <span>
-            Azure<span className="text-muted-foreground">ChatGPT</span>
+            Hexa<span className="text-muted-foreground">ChatGPT</span>
           </span>
         </CardTitle>
         <CardDescription>
-          Login in with your GitHub or Microsoft 365 account
+          Login in with your Microsoft 365 account
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
