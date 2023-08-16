@@ -27,7 +27,7 @@ const configureIdentityProvider = () => {
         tenantId: process.env.AZURE_AD_TENANT_ID!,
         authorization: {
             params: {
-                scope: "openid profile email",
+                scope: "openid profile user.Read email",
             },
         },
       })
