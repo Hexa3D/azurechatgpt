@@ -17,7 +17,7 @@ import {
   FaqDocumentIndex,
 } from "./models";
 
-const MAX_DOCUMENT_SIZE = 20000000;
+const MAX_DOCUMENT_SIZE = 100000000;
 
 export const UploadDocument = async (formData: FormData) => {
   const { docs, file, chatThreadId } = await LoadFile(formData);
