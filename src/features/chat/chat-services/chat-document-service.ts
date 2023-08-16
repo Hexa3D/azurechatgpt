@@ -81,7 +81,7 @@ const IndexDocuments = async (
   let index = 0;
   for (const doc of docs) {
     const docToAdd: FaqDocumentIndex = {
-      id: nanoid(),
+      id: 'id' + nanoid(),
       chatThreadId,
       user: await userHashedId(),
       pageContent: doc,
@@ -128,7 +128,7 @@ export const UpsertChatDocument = async (
 ) => {
   const modelToSave: ChatDocumentModel = {
     chatThreadId: chatThreadID,
-    id: nanoid(),
+    id: 'id' + nanoid(),
     userId: await userHashedId(),
     createdAt: new Date(),
     type: CHAT_DOCUMENT_ATTRIBUTE,
