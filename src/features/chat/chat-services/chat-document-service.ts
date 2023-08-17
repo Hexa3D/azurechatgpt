@@ -1,5 +1,6 @@
 "use server";
 
+import path from "path";
 import { userHashedId } from "@/features/auth/helpers";
 import { initDBContainer } from "@/features/common/cosmos";
 import { AzureCogSearch } from "@/features/langchain/vector-stores/azure-cog-search/azure-cog-vector-store";
@@ -36,8 +37,27 @@ const LoadFile = async (formData: FormData) => {
 
     const blob = new Blob([file], { type: file.type });
 
+    let documentModel;
+
+    const fileExtension = path.extname(file.name);
+    switch (fileExtension) {
+      case ".pdf":
+        documentModel = "prebuilt-document";
+        break;
+      case ".xls":
+      case ".xlsx":
+      case ".doc":
+      case ".docx":
+      case ".ppt":
+      case ".pptx":
+        documentModel = "prebuilt-read";
+        break;
+      default:
+        throw new Error("Illegal file format provided: " + fileExtension.replace(".",""));
+    }
+
     const poller = await client.beginAnalyzeDocument(
-      "prebuilt-document",
+      documentModel,
       await blob.arrayBuffer()
     );
 
