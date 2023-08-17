@@ -135,7 +135,7 @@ export const initDocumentIntelligence = () => {
     process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT,
     new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY),
     {
-      apiVersion: "2022-08-31",
+      apiVersion: "2023-02-28-preview",
     }
   );
 
