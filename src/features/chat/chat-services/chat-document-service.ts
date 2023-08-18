@@ -7,6 +7,7 @@ import { AzureCogSearch } from "@/features/langchain/vector-stores/azure-cog-sea
 import {
   AzureKeyCredential,
   DocumentAnalysisClient,
+  DocumentModel
 } from "@azure/ai-form-recognizer";
 import { Document } from "langchain/document";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
@@ -17,6 +18,10 @@ import {
   ChatDocumentModel,
   FaqDocumentIndex,
 } from "./models";
+import {PrebuiltDocumentReadModel} from "@/features/chat/chat-services/chat-document-read-model";
+import {PrebuiltDocumentModel, PrebuiltDocumentResult} from "@/features/chat/chat-services/chat-document-model";
+import {getDocumentModel} from "@/features/chat/chat-services/chat-document-model-factory";
+
 
 const MAX_DOCUMENT_SIZE = 100000000;
 
@@ -37,24 +42,9 @@ const LoadFile = async (formData: FormData) => {
 
     const blob = new Blob([file], { type: file.type });
 
-    let documentModel;
-
     const fileExtension = path.extname(file.name);
-    switch (fileExtension) {
-      case ".pdf":
-        documentModel = "prebuilt-document";
-        break;
-      case ".xls":
-      case ".xlsx":
-      case ".doc":
-      case ".docx":
-      case ".ppt":
-      case ".pptx":
-        documentModel = "prebuilt-read";
-        break;
-      default:
-        throw new Error("Illegal file format provided: " + fileExtension.replace(".",""));
-    }
+
+    const documentModel : DocumentModel<PrebuiltDocumentResult> = getDocumentModel(fileExtension);
 
     const poller = await client.beginAnalyzeDocument(
       documentModel,
@@ -133,10 +123,7 @@ export const initAzureSearchVectorStore = () => {
 export const initDocumentIntelligence = () => {
   const client = new DocumentAnalysisClient(
     process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT,
-    new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY),
-    {
-      apiVersion: "2023-02-28-preview",
-    }
+    new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY)
   );
 
   return client;
