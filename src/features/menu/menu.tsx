@@ -16,13 +16,13 @@ export const MainMenu = () => {
             <AvatarImage src="/ai-icon.png" />
           </Avatar>
         </Link>
-        <Link
-          href="/reporting"
-          className="w-10 h-10 items-center justify-center flex rounded-full hover:bg-secondary"
-          title="Reporting"
-        >
-          <BarChartHorizontalBig size={20} />
-        </Link>
+        {/*<Link*/}
+        {/*  href="/reporting"*/}
+        {/*  className="w-10 h-10 items-center justify-center flex rounded-full hover:bg-secondary"*/}
+        {/*  title="Reporting"*/}
+        {/*>*/}
+        {/*  <BarChartHorizontalBig size={20} />*/}
+        {/*</Link>*/}
       </div>
       <UserProfile />
     </div>
