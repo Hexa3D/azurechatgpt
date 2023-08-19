@@ -1,26 +1,20 @@
 "use server";
 
 import path from "path";
-import { userHashedId } from "@/features/auth/helpers";
-import { initDBContainer } from "@/features/common/cosmos";
-import { AzureCogSearch } from "@/features/langchain/vector-stores/azure-cog-search/azure-cog-vector-store";
-import {
-  AzureKeyCredential,
-  DocumentAnalysisClient,
-  DocumentModel
-} from "@azure/ai-form-recognizer";
-import { Document } from "langchain/document";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { nanoid } from "nanoid";
-import {
-  CHAT_DOCUMENT_ATTRIBUTE,
-  ChatDocumentModel,
-  FaqDocumentIndex,
-} from "./models";
-import {PrebuiltDocumentReadModel} from "@/features/chat/chat-services/chat-document-read-model";
-import {PrebuiltDocumentModel, PrebuiltDocumentResult} from "@/features/chat/chat-services/chat-document-model";
+import {userHashedId} from "@/features/auth/helpers";
+import {initDBContainer} from "@/features/common/cosmos";
+import {AzureCogSearch} from "@/features/langchain/vector-stores/azure-cog-search/azure-cog-vector-store";
+import {AzureKeyCredential, DocumentAnalysisClient, DocumentModel} from "@azure/ai-form-recognizer";
+import {ComputerVisionClient} from "@azure/cognitiveservices-computervision";
+import {CognitiveServicesCredentials} from "@azure/ms-rest-azure-js";
+import {Document} from "langchain/document";
+import {OpenAIEmbeddings} from "langchain/embeddings/openai";
+import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
+import {nanoid} from "nanoid";
+import {CHAT_DOCUMENT_ATTRIBUTE, ChatDocumentModel, FaqDocumentIndex,} from "./models";
+import {PrebuiltDocumentResult} from "@/features/chat/chat-services/chat-document-model";
 import {getDocumentModel} from "@/features/chat/chat-services/chat-document-model-factory";
+import {DescribeImageInStreamResponse} from "@azure/cognitiveservices-computervision/esm/models";
 
 
 const MAX_DOCUMENT_SIZE = 100000000;
@@ -38,35 +32,58 @@ const LoadFile = async (formData: FormData) => {
   const chatThreadId: string = formData.get("id") as unknown as string;
 
   if (file && file.size < MAX_DOCUMENT_SIZE) {
-    const client = initDocumentIntelligence();
-
     const blob = new Blob([file], { type: file.type });
 
     const fileExtension = path.extname(file.name);
 
-    const documentModel : DocumentModel<PrebuiltDocumentResult> = getDocumentModel(fileExtension);
-
-    const poller = await client.beginAnalyzeDocument(
-      documentModel,
-      await blob.arrayBuffer()
-    );
-
-    const { paragraphs } = await poller.pollUntilDone();
-
+    // Results will be held in this list
     const docs: Document[] = [];
 
-    if (paragraphs) {
-      for (const paragraph of paragraphs) {
-        const doc: Document = {
-          pageContent: paragraph.content,
-          metadata: {
-            file: file.name,
-          },
-        };
-        docs.push(doc);
+    // Check if it's an image
+    if ([".png", ".jpg", ".jpeg"].includes(fileExtension)) {
+      const client = initImageIntelligence();
+
+      const response : DescribeImageInStreamResponse = await client.describeImageInStream(
+          await blob.arrayBuffer()
+      );
+
+      if (response.captions) {
+        for (const caption of response.captions) {
+          const doc: Document = {
+            pageContent: caption.text ? caption.text : "Cannot identify the image",
+            metadata: {
+              file: file.name,
+            },
+          };
+          docs.push(doc);
+        }
       }
+
     } else {
-      throw new Error("No content found in document.");
+      const client = initDocumentIntelligence();
+
+      const documentModel : DocumentModel<PrebuiltDocumentResult> = getDocumentModel(fileExtension);
+
+      const poller = await client.beginAnalyzeDocument(
+          documentModel,
+          await blob.arrayBuffer()
+      );
+
+      const { paragraphs } = await poller.pollUntilDone();
+
+      if (paragraphs) {
+        for (const paragraph of paragraphs) {
+          const doc: Document = {
+            pageContent: paragraph.content,
+            metadata: {
+              file: file.name,
+            },
+          };
+          docs.push(doc);
+        }
+      } else {
+        throw new Error("No content found in document.");
+      }
     }
 
     return { docs, file, chatThreadId };
@@ -121,13 +138,21 @@ export const initAzureSearchVectorStore = () => {
 };
 
 export const initDocumentIntelligence = () => {
-  const client = new DocumentAnalysisClient(
-    process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT,
-    new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY)
+  return new DocumentAnalysisClient(
+      process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT,
+      new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY)
   );
-
-  return client;
 };
+
+export const initImageIntelligence = () => {
+  if (!process.env.AZURE_IMAGE_INTELLIGENCE_ENDPOINT || !process.env.AZURE_IMAGE_INTELLIGENCE_KEY) {
+    throw new Error("Azure Image Intelligence Endpoint and Key are required.");
+  }
+  return new ComputerVisionClient(
+      new CognitiveServicesCredentials(process.env.AZURE_IMAGE_INTELLIGENCE_KEY),
+      process.env.AZURE_IMAGE_INTELLIGENCE_ENDPOINT
+  );
+}
 
 export const UpsertChatDocument = async (
   fileName: string,
