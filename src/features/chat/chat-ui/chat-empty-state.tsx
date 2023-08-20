@@ -100,6 +100,11 @@ export const EmptyState: FC<Prop> = (props) => {
                 Upload
               </Button>
             </form>
+            <p className="text-sm text-muted-foreground">
+            <p>Supported file formats:</p>
+            <p>   PDF, DOCX, PPT, XLS - Document analysis </p>
+            <p>   PNG, JPEG - Image content analysis </p>
+            </p>
           </div>
         )}
       </Card>
