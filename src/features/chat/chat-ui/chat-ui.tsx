@@ -1,6 +1,6 @@
 "use client";
 
-import ChatInput from "@/components/chat/chat-input";
+import ChatParent from "@/components/chat/chat-parent";
 import ChatLoading from "@/components/chat/chat-loading";
 import ChatRow from "@/components/chat/chat-row";
 import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor";
@@ -45,7 +45,6 @@ export const ChatUI: FC<Prop> = (props) => {
   const { toast } = useToast();
   const {
     messages,
-    input,
     handleInputChange,
     handleSubmit,
     reload,
@@ -157,11 +156,10 @@ export const ChatUI: FC<Prop> = (props) => {
         />
       )}
 
-      <ChatInput
-        isLoading={isLoading}
-        value={input}
-        handleInputChange={handleInputChange}
-        handleSubmit={onHandleSubmit}
+      <ChatParent
+          isLoading={isLoading}
+          handleSubmit={onHandleSubmit}
+          handleInputChange={handleInputChange}
       />
     </Card>
   );

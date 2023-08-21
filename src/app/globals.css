@@ -79,3 +79,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.dropdown-prompt {
+  position: absolute;
+  bottom: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+}
