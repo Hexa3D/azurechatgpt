@@ -15,7 +15,6 @@ const ChatParent: FC<ChatParentProps> = (props: ChatParentProps) => {
 
     // let selectedValue: string | null = null;
 
-    const [selectedValue, setSelectedValue] = useState('');
     const [dropdownVisible, setDropdownVisible] = useState(true);
 
     const [rows, setRows] = useState(1);
@@ -28,16 +27,13 @@ const ChatParent: FC<ChatParentProps> = (props: ChatParentProps) => {
     };
 
     const appendInputValue = (newValue: any) => {
-        setSelectedValue(newValue);
-        // Set to max rows
+        props.handleInputChange({
+            target: {
+                value: newValue
+            }
+        });
+        setDropdownVisible(false);
         setRowsToMax(maxRows - 1);
-    }
-
-    const getValue = () => {
-        if (selectedValue && selectedValue.length > 0 && !props.value.includes(selectedValue) && !props.messages.length) {
-            return selectedValue + props.value;
-        }
-        return props.value;
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -58,7 +54,7 @@ const ChatParent: FC<ChatParentProps> = (props: ChatParentProps) => {
                     setRows={setRows}
                     maxRows={maxRows}
                     rows={rows}
-                    value={getValue()}
+                    value={props.value}
                     handleInputChange={props.handleInputChange}
                     handleSubmit={handleSubmit}
                     isLoading={props.isLoading}

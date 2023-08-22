@@ -29,6 +29,8 @@ interface Prop {
 }
 
 export const ChatUI: FC<Prop> = (props) => {
+  const [inputValue, setInputValue] = useState('');
+
   const { id, chatType, conversationStyle, model } = props.chatThread;
 
   const { data: session } = useSession();
