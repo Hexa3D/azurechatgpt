@@ -34,7 +34,7 @@ const ChatParent: FC<ChatParentProps> = (props: ChatParentProps) => {
     }
 
     const getValue = () => {
-        if (selectedValue && selectedValue.length > 0 && !props.value.includes(selectedValue)) {
+        if (selectedValue && selectedValue.length > 0 && !props.value.includes(selectedValue) && !props.messages.length) {
             return selectedValue + props.value;
         }
         return props.value;
@@ -43,7 +43,6 @@ const ChatParent: FC<ChatParentProps> = (props: ChatParentProps) => {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         props.handleSubmit(e);  // call parent handleSubmit
         setDropdownVisible(false); // hide dropdown after form submit
-        setSelectedValue('');
     }
 
     return (
