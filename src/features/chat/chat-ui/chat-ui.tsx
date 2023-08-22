@@ -1,6 +1,6 @@
 "use client";
 
-import ChatInput from "@/components/chat/chat-input";
+import ChatParent from "@/components/chat/chat-parent";
 import ChatLoading from "@/components/chat/chat-loading";
 import ChatRow from "@/components/chat/chat-row";
 import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor";
@@ -157,7 +157,8 @@ export const ChatUI: FC<Prop> = (props) => {
         />
       )}
 
-      <ChatInput
+      <ChatParent
+          messages={messages}
           isLoading={isLoading}
           value={input}
           handleInputChange={handleInputChange}
