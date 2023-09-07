@@ -11,9 +11,11 @@ export const useChatScrollAnchor = (
 
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, clientHeight, scrollHeight } = ref.current;
-      const atBottom = (scrollHeight - scrollTop) === clientHeight;
-      setAutoScroll(atBottom);
+      if (ref.current) {
+        const {scrollTop, clientHeight, scrollHeight} = ref.current;
+        const atBottom = (scrollHeight - scrollTop) === clientHeight;
+        setAutoScroll(atBottom);
+      }
     }
 
     if (ref.current) {
