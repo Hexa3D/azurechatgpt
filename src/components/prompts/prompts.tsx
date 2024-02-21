@@ -30,6 +30,8 @@ export const DropdownWithLazyLoad: React.FC<DropdownProps> = (props) => {
             const results = Papa.parse(csvText, {header: true}).data as RowType[];
 
             // The short description is named as column 'act'
+            // We should sort by the row.act
+            results.sort((a, b) => a.act.localeCompare(b.act));
             const options = results.map((row: RowType) => row.act);
 
             results.forEach((row: RowType) => {
