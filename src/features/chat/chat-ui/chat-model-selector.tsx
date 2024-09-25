@@ -22,7 +22,7 @@ export const ChatModelSelector: FC<Prop> = (props) => {
         <TabsTrigger value="gpt-3.5" disabled={props.disable}>
           ⚡ GPT-3.5
         </TabsTrigger>
-        <TabsTrigger value="gpt-4" disabled={props.disable}>
+        <TabsTrigger value="gpt-4o" disabled={props.disable}>
           ✨ GPT-4
         </TabsTrigger>
       </TabsList>

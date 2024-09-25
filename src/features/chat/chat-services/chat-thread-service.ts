@@ -161,7 +161,7 @@ export const CreateChatThread = async () => {
     createdAt: new Date(),
     isDeleted: false,
     chatType: "simple",
-    model: "gpt-4",
+    model: "gpt-4o",
     conversationStyle: "precise",
     type: CHAT_THREAD_ATTRIBUTE,
   };
